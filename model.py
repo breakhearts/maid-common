@@ -22,6 +22,7 @@ class DBHelper:
     def load_one(self, cls, k, v):
         session = self.create_session()
         r = session.query(cls).filter(getattr(cls, k) == v).first()
+        session.close()
         return r
 
     def delete_one(self, cls, k, v):
@@ -30,16 +31,23 @@ class DBHelper:
         if t:
             session.delete(t)
             session.commit()
+        session.close()
 
     def update_one(self, cls, obj, k, v):
         session = self.create_session()
-        t = session.query(cls).filter_by(getattr(obj, k) == v).first()
+        t = session.query(cls).filter(getattr(cls, k) == v).first()
         for (k, v) in obj.__dict__.items():
             if not k.startswith('_'):
                 setattr(t, k, v)
         session.commit()
+        session.close()
 
     def insert_one(self, obj):
         session = self.create_session()
         session.add(obj)
         session.commit()
+        session.close()
+
+    def close_engine(self):
+        self.engine.raw_connection().invalidate()
+        self.engine.dispose()
