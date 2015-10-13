@@ -9,3 +9,7 @@ def wise_mk_dir(path):
     if not os.path.exists(p):
         wise_mk_dir(p)
     os.mkdir(path)
+
+def wise_mk_dir_for_file(filepath):
+    p = os.path.basename(filepath)
+    wise_mk_dir(p)
