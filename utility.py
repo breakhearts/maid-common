@@ -11,5 +11,5 @@ def wise_mk_dir(path):
     os.mkdir(path)
 
 def wise_mk_dir_for_file(filepath):
-    p = os.path.basename(filepath)
+    p = os.path.dirname(filepath)
     wise_mk_dir(p)
