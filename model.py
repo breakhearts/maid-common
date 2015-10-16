@@ -13,6 +13,9 @@ class DBHelper:
     def create_tables(self):
         self.meta.create_all(self.engine)
 
+    def drop_tables(self):
+        self.meta.drop_all(self.engine)
+
     def create_session(self):
         return self.session_cls()
 
