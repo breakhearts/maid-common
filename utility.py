@@ -1,4 +1,6 @@
 import os
+import requests
+import json
 
 def wise_mk_dir(path):
     if path == "":
@@ -34,3 +36,15 @@ UA_LIST = [
 def random_ua():
     import random
     return random.choice(UA_LIST)
+
+def get_ip_country(ip):
+    api = "http://apis.baidu.com/apistore/iplookupservice/iplookup?ip=%s" % ip
+    headers = {"apikey":"bebdaf5a1d4d124669b121a990c9fb44"}
+    r = requests.get(api, headers=headers, timeout=5)
+    if r.status_code != 200:
+        return None
+    try:
+        t = json.loads(r.content)
+        return t["retData"]["country"].encode("utf-8")
+    except:
+        return None
