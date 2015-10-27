@@ -24,19 +24,22 @@ class Logger(object):
         console_handler.setLevel(logging.DEBUG)
 
         self.debug_logger = logging.getLogger("%s" % module)
-        self.debug_logger.setLevel(logging.DEBUG)
-        self.debug_logger.addHandler(debug_file_handler)
-        self.debug_logger.addHandler(console_handler)
+        if len(self.debug_logger.handlers) == 0:
+            self.debug_logger.setLevel(logging.DEBUG)
+            self.debug_logger.addHandler(debug_file_handler)
+            self.debug_logger.addHandler(console_handler)
 
         self.error_logger = logging.getLogger("error_%s" % module)
-        self.error_logger.setLevel(logging.ERROR)
-        self.error_logger.addHandler(error_file_handler)
-        self.error_logger.addHandler(console_handler)
+        if len(self.error_logger.handlers) == 0:
+            self.error_logger.setLevel(logging.ERROR)
+            self.error_logger.addHandler(error_file_handler)
+            self.error_logger.addHandler(console_handler)
 
         self.exception_logger = logging.getLogger("exception_%s" % module)
-        self.exception_logger.setLevel(logging.ERROR)
-        self.exception_logger.addHandler(exception_file_handler)
-        self.exception_logger.addHandler(console_handler)
+        if len(self.exception_logger.handlers) == 0:
+            self.exception_logger.setLevel(logging.ERROR)
+            self.exception_logger.addHandler(exception_file_handler)
+            self.exception_logger.addHandler(console_handler)
 
     @staticmethod
     def get_head_info():
