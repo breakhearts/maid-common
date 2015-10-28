@@ -28,6 +28,6 @@ class SimpleServer:
                 self.before_run()
                 self.run()
                 self.after_run()
-            except KeyboardInterrupt:
+            except (KeyboardInterrupt, SystemExit):
                 self.tear_down()
                 break
