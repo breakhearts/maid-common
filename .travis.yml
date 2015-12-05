@@ -1,10 +1,7 @@
-before_install:
-  - sudo apt-get install python-pip python-dev build-essential
-  - sudo pip install -r requirments.txt
-  - pip install pytest
 language: python
-matrix:
-  include:
-    - python: "2.7"
-      env: TEST_SUITE=pytest
-script: $TEST_SUITE
+python:
+  - "2.7"
+install:
+  - pip install .
+  - pip install -r requirements.txt
+script: py.test
