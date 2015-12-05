@@ -1,0 +1,10 @@
+before_install:
+  - sudo apt-get pip
+  - sudo pip install -r requirments.txt
+  - pip install pytest
+language: python
+matrix:
+  include:
+    - python: "2.7"
+      env: TEST_SUITE=pytest
+script: $TEST_SUITE
