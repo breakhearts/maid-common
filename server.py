@@ -35,6 +35,7 @@ class SimpleServer:
                 break
 
 ZMQ_SERVER_DEFAULT_SETTINGS = {
+    "ip" : "127.0.0.1",
     "client_port":9300,
     "worker_port":9301
 }
@@ -53,8 +54,8 @@ class ZmqTaskServer(SimpleServer):
         self.poller = zmq.Poller()
 
     def setup(self):
-        self.client_socket.bind("tcp://*:%d", self.settings["client_port"])
-        self.worker_socket.bind("tcp://*%d", self.settings["worker_port"])
+        self.client_socket.bind("tcp://*:%d" % self.settings["client_port"])
+        self.worker_socket.bind("tcp://*:%d" % self.settings["worker_port"])
         self.poller.register(self.worker_socket)
 
     def run(self):
@@ -63,7 +64,7 @@ class ZmqTaskServer(SimpleServer):
             if socket == self.worker_socket:
                 request = self.worker_socket.recv_multipart()
                 worker, empty, client = request[:3]
-                if self.workers.empty():
+                if not self.workers:
                    self.poller.register(self.client_socket)
                 self.workers.append(worker)
                 if client !=b"READY" and len(request) > 3:
@@ -88,12 +89,14 @@ class ZmqTaskServerClient:
         self.socket = self.context.socket(zmq.REQ)
 
     def connect(self):
-        self.socket.connect("tcp://*:%d" % self.settings["client_port"])
+        self.socket.connect("tcp://%s:%d" % (self.settings["ip"], self.settings["client_port"]))
 
-    def send_task(self):
-        pass
+    def send_task(self, task):
+        self.socket.send(cPickle.dumps(task))
+        t = self.socket.recv()
+        t = cPickle.loads(t)
 
-class ZmqTaskWorker:
+class ZmqTaskWorker(SimpleServer):
     """
     distributed task worker server base on zmq
     """
@@ -102,11 +105,11 @@ class ZmqTaskWorker:
         self.settings.update(settings)
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.REQ)
-        self.socket.connect("tcp://*:%d" % self.settings["worker_port"])
+        self.socket.connect("tcp://%s:%d" % (self.settings["ip"], self.settings["worker_port"]))
         self.socket.send(b"READY")
 
     def do_task(self, task):
-        pass
+        print task
 
     def run(self):
         address, empty, task = self.socket.recv_multipart()
